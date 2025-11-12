@@ -54,12 +54,12 @@ public class GameManager : MonoBehaviour
         if (replayButton) replayButton.onClick.AddListener(Replay);
         if (quitButton) quitButton.onClick.AddListener(QuitApp);
         if (pauseButton) pauseButton.onClick.AddListener(delegate { pausePanel.SetActive(true); Time.timeScale = 0; });
-        if (closePausePanelButton) closePausePanelButton.onClick.AddListener(delegate { pausePanel.SetActive(false);Time.timeScale = 1; });
+        if (closePausePanelButton) closePausePanelButton.onClick.AddListener(delegate { pausePanel.SetActive(false); Time.timeScale = 1; });
         if (closeApp) closeApp.onClick.AddListener(delegate { QuitApp(); });
         if (bgMusic) bgMusic.onValueChanged.AddListener(delegate { SoundManager.I.SetMusicEnabled(!bgMusic.isOn); });
         if (soundSFX) soundSFX.onValueChanged.AddListener(delegate { SoundManager.I.SetSfxEnabled(!soundSFX.isOn); });
-        
-        
+
+
         Time.timeScale = 0f; // stay paused until we actually start
     }
 
@@ -190,7 +190,25 @@ public class GameManager : MonoBehaviour
 
     public void QuitApp()
     {
-#if UNITY_EDITOR
+#if UNITY_WEBGL
+        Time.timeScale = 0f;
+        IsRunning = false;
+
+        // Clear current scene objects
+        ClearAllFruitsInScene();
+
+        // Reset score
+        score = 0;
+        if (scoreText) scoreText.text = "0";
+
+        // Hide gameplay UIs
+        if (pausePanel) pausePanel.SetActive(false);
+        if (gameOverPanel) gameOverPanel.SetActive(false);
+
+        // ✅ Show start panel (for restart)
+        if (startPanel) startPanel.SetActive(true);
+
+#elif UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
