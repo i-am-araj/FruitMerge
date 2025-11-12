@@ -1,0 +1,211 @@
+fileFormatVersion: 2
+guid: 934ed21262a169a4688fccc67936933b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8558258358756935692
+    second: Watermelon_0
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: 0
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Watermelon_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3
+        width: 634
+        height: 768
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f77646cd55fa3980800000000000000
+      internalID: -8558258358756935692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape:
+    - - {x: 199, y: -308.5}
+      - {x: 232, y: -271.5}
+      - {x: 265, y: -217.5}
+      - {x: 290, y: -160.5}
+      - {x: 305, y: -97.5}
+      - {x: 313, y: -45.5}
+      - {x: 315, y: 18.5}
+      - {x: 308, y: 79.5}
+      - {x: 299, y: 129.5}
+      - {x: 279, y: 184.5}
+      - {x: 257, y: 229.5}
+      - {x: 226, y: 274.5}
+      - {x: 195, y: 307.5}
+      - {x: 150, y: 342.5}
+      - {x: 96, y: 370.5}
+      - {x: 42, y: 381.5}
+      - {x: -30, y: 382.5}
+      - {x: -102, y: 365.5}
+      - {x: -147, y: 343.5}
+      - {x: -186, y: 314.5}
+      - {x: -221, y: 279.5}
+      - {x: -251, y: 240.5}
+      - {x: -275, y: 194.5}
+      - {x: -293, y: 145.5}
+      - {x: -306, y: 99.5}
+      - {x: -313, y: 51.5}
+      - {x: -314, y: -9.5}
+      - {x: -311, y: -67.5}
+      - {x: -304, y: -112.5}
+      - {x: -285, y: -169.5}
+      - {x: -268, y: -210.5}
+      - {x: -246, y: -248.5}
+      - {x: -215, y: -288.5}
+      - {x: -186, y: -320.5}
+      - {x: -146, y: -345.5}
+      - {x: -109, y: -362.5}
+      - {x: -63, y: -378.5}
+      - {x: -2, y: -381.5}
+      - {x: 44, y: -379.5}
+      - {x: 92, y: -369.5}
+      - {x: 135, y: -351.5}
+      - {x: 173, y: -329.5}
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Watermelon_0: -8558258358756935692
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

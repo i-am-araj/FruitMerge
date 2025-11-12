@@ -1,0 +1,249 @@
+fileFormatVersion: 2
+guid: a69d06b9b7cb35f4d96913f957d1d399
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2534248692213106135
+    second: Blueberry_0
+  - first:
+      213: -1689513711262940089
+    second: Blueberry_1
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: 0
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Blueberry_0
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 32
+        width: 836
+        height: 929
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92ab320dd3a84dcd0800000000000000
+      internalID: -2534248692213106135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Blueberry_1
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 53
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74445052b34ad88e0800000000000000
+      internalID: -1689513711262940089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape:
+    - - {x: 257, y: -333}
+      - {x: 299, y: -296}
+      - {x: 342, y: -252}
+      - {x: 371, y: -205}
+      - {x: 395, y: -156}
+      - {x: 413, y: -90}
+      - {x: 418, y: -38}
+      - {x: 415, y: 12}
+      - {x: 404, y: 68}
+      - {x: 381, y: 133}
+      - {x: 340, y: 198}
+      - {x: 290, y: 251}
+      - {x: 230, y: 297}
+      - {x: 165, y: 329}
+      - {x: 172, y: 346}
+      - {x: 177, y: 374}
+      - {x: 159, y: 409}
+      - {x: 106, y: 408}
+      - {x: 66, y: 382}
+      - {x: 42, y: 427}
+      - {x: 12, y: 447}
+      - {x: -28, y: 437}
+      - {x: -53, y: 410}
+      - {x: -67, y: 381}
+      - {x: -90, y: 401}
+      - {x: -138, y: 411}
+      - {x: -170, y: 400}
+      - {x: -177, y: 364}
+      - {x: -166, y: 326}
+      - {x: -210, y: 310}
+      - {x: -256, y: 281}
+      - {x: -297, y: 249}
+      - {x: -331, y: 212}
+      - {x: -360, y: 174}
+      - {x: -381, y: 135}
+      - {x: -401, y: 84}
+      - {x: -414, y: 31}
+      - {x: -417, y: -35}
+      - {x: -413, y: -93}
+      - {x: -401, y: -144}
+      - {x: -380, y: -193}
+      - {x: -352, y: -237}
+      - {x: -322, y: -277}
+      - {x: -284, y: -310}
+      - {x: -245, y: -342}
+      - {x: -195, y: -369}
+      - {x: -148, y: -387}
+      - {x: -96, y: -402}
+      - {x: -47, y: -411}
+      - {x: -1, y: -411}
+      - {x: 62, y: -409}
+      - {x: 118, y: -401}
+      - {x: 168, y: -383}
+      - {x: 215, y: -359}
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Blueberry_0: -2534248692213106135
+      Blueberry_1: -1689513711262940089
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
