@@ -74,7 +74,12 @@ public class GameManager : MonoBehaviour
         if (startPanel) startPanel.SetActive(true);
         if (gameOverPanel) gameOverPanel.SetActive(false);
     }
-
+    void Update()
+    {
+#if UNITY_WEBGL
+        Screen.orientation = ScreenOrientation.Portrait;
+#endif
+    }
     // ----------- Public API -----------
 
     public void AddScore(int add)
