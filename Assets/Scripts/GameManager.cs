@@ -19,17 +19,15 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
 
     [Header("Buttons")]
-    public Button playButton;     // starts run (countdown + tutorial)
-    public Button replayButton;   // replay from gameOver or pause
+    public Button playButton;
+    public Button replayButton;
     public Button quitButton;
 
     [Header("Tutorial / Coach")]
-    public TutorialCoach tutorial; // optional; assign if you want the helper overlay
-    [Tooltip("Show the helper/tutorial when a run starts.")]
+    public TutorialCoach tutorial;
     public bool showTutorialOnStart = true;
 
-    [Header("Sound Controls")]
-    [Tooltip("Pause / sound Controls")]
+    [Header("Pause / Sound")]
     public Button pauseButton;
     public Button closePausePanelButton;
     public Button closeApp;
@@ -40,9 +38,18 @@ public class GameManager : MonoBehaviour
     [Header("Scoring")]
     public string bestKey = "SUIKA_BEST";
 
+    [Header("Ads")]
+    public int scoreAdInterval = 200;   // midgame ad every 200 points
+    private int nextScoreAd = 0;
+    private bool midgameAdRunning = false;
+
     public bool IsRunning { get; private set; }
     int score;
+    [SerializeField] bool directStart=false;
 
+    // --------------------------------------------------------------------
+    // INITIALIZATION
+    // --------------------------------------------------------------------
     void Awake()
     {
         if (I != null && I != this) { Destroy(gameObject); return; }
@@ -50,81 +57,145 @@ public class GameManager : MonoBehaviour
 
         Application.targetFrameRate = 60;
 
-        if (playButton) playButton.onClick.AddListener(() => StartCoroutine(StartRunRoutine()));
-        if (replayButton) replayButton.onClick.AddListener(Replay);
+        // Button hooks
+        if (directStart)
+        {
+            if (startPanel) startPanel.SetActive(false);
+            StartCoroutine(StartRunRoutine());
+        }
+        else
+        {
+            if (startPanel) startPanel.SetActive(true);
+        }
+        if (playButton) playButton.onClick.AddListener(() => StartCoroutine(StartRunRoutine_WithAd()));
+        if (replayButton) replayButton.onClick.AddListener(() => StartCoroutine(ReplayRoutine_WithAd()));
         if (quitButton) quitButton.onClick.AddListener(QuitApp);
-        if (pauseButton) pauseButton.onClick.AddListener(delegate { pausePanel.SetActive(true); Time.timeScale = 0; });
-        if (closePausePanelButton) closePausePanelButton.onClick.AddListener(delegate { pausePanel.SetActive(false); Time.timeScale = 1; });
-        if (closeApp) closeApp.onClick.AddListener(delegate { QuitApp(); });
-        if (bgMusic) bgMusic.onValueChanged.AddListener(delegate { SoundManager.I.SetMusicEnabled(!bgMusic.isOn); });
-        if (soundSFX) soundSFX.onValueChanged.AddListener(delegate { SoundManager.I.SetSfxEnabled(!soundSFX.isOn); });
+        if (pauseButton) pauseButton.onClick.AddListener(() =>
+        {
+            pausePanel.SetActive(true);
+            Time.timeScale = 0;
 
+            //if (showBannerInPause)
+            //{
+            //    if (AdManager.I != null) AdManager.I.ShowBanner();
+            //}
+        });
 
-        Time.timeScale = 0f; // stay paused until we actually start
+        if (closePausePanelButton) closePausePanelButton.onClick.AddListener(() =>
+        {
+            pausePanel.SetActive(false);
+            Time.timeScale = 1;
+            //if (AdManager.I != null) AdManager.I.HideBanner();
+        });
+
+        if (closeApp) closeApp.onClick.AddListener(() => QuitApp());
+
+        if (bgMusic) bgMusic.onValueChanged.AddListener((_) =>
+        {
+            if (SoundManager.I != null) SoundManager.I.SetMusicEnabled(!bgMusic.isOn);
+        });
+        if (soundSFX) soundSFX.onValueChanged.AddListener((_) =>
+        {
+            if (SoundManager.I != null) SoundManager.I.SetSfxEnabled(!soundSFX.isOn);
+        });
+
+        Time.timeScale = 0f;
     }
 
     void Start()
     {
         score = 0;
         if (scoreText) scoreText.text = "0";
+        int best = 0;
+        if (DataManager.instance != null) best = DataManager.instance.GetInt(bestKey, 0);
 
-        int best = PlayerPrefs.GetInt(bestKey, 0);
         if (bestText) bestText.text = $"Best: {best}";
 
-        if (startPanel) startPanel.SetActive(true);
+        
         if (gameOverPanel) gameOverPanel.SetActive(false);
+
+        nextScoreAd = scoreAdInterval;
+
+        //if (showBannerInMenu && AdManager.I != null)
+        //    AdManager.I.ShowBanner();
     }
+
+#if UNITY_WEBGL
     void Update()
     {
-#if UNITY_WEBGL
         Screen.orientation = ScreenOrientation.Portrait;
+    }
 #endif
-    }
-    // ----------- Public API -----------
 
-    public void AddScore(int add)
+    // --------------------------------------------------------------------
+    // PLAY (WITH REWARDED AD) - uses AdManager
+    // --------------------------------------------------------------------
+    IEnumerator StartRunRoutine_WithAd()
     {
-        score += Mathf.Max(0, add);
-        if (scoreText) scoreText.text = score.ToString();
+        
+        bool adDone = false;
+        playButton.interactable = false;
+
+        if (AdManager.I != null)
+        {
+            //AdManager.I.HideBanner();
+
+            AdManager.I.ShowRewarded(
+                onSuccess: () => { adDone = true; },
+                onFail: (err) => { Debug.Log("[GameManager] Play ad failed: " + err); adDone = true; }
+            );
+        }
+        else
+        {
+            // no ad manager — proceed immediately
+            adDone = true;
+        }
+
+        while (!adDone) yield return null;
+        playButton.interactable = true;
+        // After ad → proceed to normal start routine
+        yield return StartCoroutine(StartRunRoutine());
     }
 
-    public void GameOver()
+    // --------------------------------------------------------------------
+    // REPLAY (WITH REWARDED AD) - uses AdManager
+    // --------------------------------------------------------------------
+    IEnumerator ReplayRoutine_WithAd()
     {
-        if (!IsRunning) return;
+        bool adDone = false;
 
-        IsRunning = false;
-        Time.timeScale = 0f;
+        if (AdManager.I != null)
+        {
+            //AdManager.I.HideBanner();
 
-        // best
-        int best = PlayerPrefs.GetInt(bestKey, 0);
-        if (score > best) { best = score; PlayerPrefs.SetInt(bestKey, best); }
-        if (bestText) bestText.text = $"Best: {best}";
-        if (finalScoreText) finalScoreText.text = score.ToString();
+            AdManager.I.ShowRewarded(
+                onSuccess: () => { adDone = true; },
+                onFail: (err) => { Debug.Log("[GameManager] Replay ad failed: " + err); adDone = true; }
+            );
+        }
+        else
+        {
+            adDone = true;
+        }
 
-        if (gameOverPanel) gameOverPanel.SetActive(true);
+        while (!adDone) yield return null;
+
+        yield return StartCoroutine(ReplayRoutine());
     }
 
-    /// <summary>
-    /// Replay from beginning: clears all fruits (bucket + crane),
-    /// resets score, centers crane, respawns the first fruit, shows countdown, (optional) shows tutorial.
-    /// </summary>
-    public void Replay()
-    {
-        StopAllCoroutines();
-        StartCoroutine(ReplayRoutine());
-    }
-
-    // ----------- Routines -----------
-
+    // --------------------------------------------------------------------
+    // ORIGINAL StartRunRoutine
+    // --------------------------------------------------------------------
     IEnumerator StartRunRoutine()
     {
-        // hide menus
         if (startPanel) startPanel.SetActive(false);
         if (gameOverPanel) gameOverPanel.SetActive(false);
 
-        // block gameplay input during countdown
+        //if (AdManager.I != null) AdManager.I.HideBanner();
+
         if (crane)
         {
+            crane.ResetCrane();
             crane.SetUIBlocking(true);
             crane.ClearPressState();
             yield return StartCoroutine(crane.PlayStartCountdown(3));
@@ -132,20 +203,22 @@ public class GameManager : MonoBehaviour
             crane.SetUIBlocking(false);
         }
 
-        // start
         IsRunning = true;
         Time.timeScale = 1f;
 
-        // optional tutorial hint
         if (showTutorialOnStart && tutorial)
-            tutorial.ShowForSeconds(2.5f); // arrows wiggle briefly
+            tutorial.ShowForSeconds(2.5f);
+        showTutorialOnStart = false;
     }
 
+    // --------------------------------------------------------------------
+    // ORIGINAL ReplayRoutine
+    // --------------------------------------------------------------------
     IEnumerator ReplayRoutine()
     {
         Time.timeScale = 1f;
 
-        ClearAllFruitsInScene();
+        ClearAllFruits();
 
         score = 0;
         if (scoreText) scoreText.text = "0";
@@ -162,13 +235,12 @@ public class GameManager : MonoBehaviour
         if (startPanel) startPanel.SetActive(false);
         if (gameOverPanel) gameOverPanel.SetActive(false);
 
+        //if (AdManager.I != null) AdManager.I.HideBanner();
+
         if (crane)
         {
-            // countdown
             yield return StartCoroutine(crane.PlayStartCountdown(3));
             crane.ClearPressState();
-
-            // ✅ IMPORTANT: re-enable gameplay input now
             crane.SetUIBlocking(false);
         }
 
@@ -179,40 +251,106 @@ public class GameManager : MonoBehaviour
             tutorial.ShowForSeconds(2.5f);
     }
 
-
-    // ----------- Helpers -----------
-
-    void ClearAllFruitsInScene()
+    // --------------------------------------------------------------------
+    // SCORING
+    // --------------------------------------------------------------------
+    public void AddScore(int add)
     {
-        // Find any active Fruit in scene (bucket or elsewhere)
-        var fruits = FindObjectsOfType<Fruit>(includeInactive: false);
-        foreach (var f in fruits)
+        score += Mathf.Max(0, add);
+        if (scoreText) scoreText.text = score.ToString();
+
+        int best = 0;
+        if (DataManager.instance != null) best = DataManager.instance.GetInt(bestKey, 0);
+
+        if (score > best)
         {
-            // If this happens to be the one parented to the crane, Despawn will handle it cleanly
-            FruitFactory.Despawn(f.gameObject);
+            if (bestText) bestText.text = score.ToString();
+            if (DataManager.instance != null) DataManager.instance.SetInt(bestKey, score);
+        }
+
+        if (score >= nextScoreAd && !midgameAdRunning)
+        {
+            midgameAdRunning = true;
+
+            if (AdManager.I != null)
+            {
+                AdManager.I.ShowMidgame(
+                    onStart: () => { Debug.Log("[GameManager] Midgame ad started"); },
+                    onFinish: () => { midgameAdRunning = false; },
+                    onError: (err) =>
+                    {
+                        Debug.Log("[GameManager] Midgame ad error: " + err);
+                        midgameAdRunning = false;
+                    }
+                );
+            }
+            else
+            {
+                // No AdManager: simply reset flag so ads don't block flow
+                midgameAdRunning = false;
+            }
+
+            nextScoreAd += scoreAdInterval;
         }
     }
 
+    // --------------------------------------------------------------------
+    // GAME OVER
+    // --------------------------------------------------------------------
+    public void GameOver()
+    {
+        if (!IsRunning) return;
+
+        IsRunning = false;
+        Time.timeScale = 0f;
+
+        int best = 0;
+        if (DataManager.instance != null) best = DataManager.instance.GetInt(bestKey, 0);
+
+        if (score > best)
+        {
+            best = score;
+            if (DataManager.instance != null) DataManager.instance.SetInt(bestKey, best);
+        }
+
+        if (bestText) bestText.text = $"Best: {best}";
+        if (finalScoreText) finalScoreText.text = score.ToString();
+
+        if (gameOverPanel) gameOverPanel.SetActive(true);
+
+        //if (showBannerInGameOver && AdManager.I != null) AdManager.I.ShowBanner();
+    }
+
+    // --------------------------------------------------------------------
+    // CLEAR ALL FRUITS
+    // --------------------------------------------------------------------
+    void ClearAllFruits()
+    {
+        var fruits = FindObjectsOfType<Fruit>(includeInactive: false);
+        foreach (var f in fruits)
+            FruitFactory.Despawn(f.gameObject);
+    }
+
+    // --------------------------------------------------------------------
+    // QUIT → MAIN MENU
+    // --------------------------------------------------------------------
     public void QuitApp()
     {
 #if UNITY_WEBGL
         Time.timeScale = 0f;
         IsRunning = false;
 
-        // Clear current scene objects
-        ClearAllFruitsInScene();
+        ClearAllFruits();
 
-        // Reset score
         score = 0;
         if (scoreText) scoreText.text = "0";
 
-        // Hide gameplay UIs
         if (pausePanel) pausePanel.SetActive(false);
         if (gameOverPanel) gameOverPanel.SetActive(false);
-
-        // ✅ Show start panel (for restart)
         if (startPanel) startPanel.SetActive(true);
 
+        //if (showBannerInMenu && AdManager.I != null)
+        //    AdManager.I.ShowBanner();
 #elif UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

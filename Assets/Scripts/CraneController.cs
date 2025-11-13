@@ -47,8 +47,7 @@ public class CraneController : MonoBehaviour
         if (!cam) cam = Camera.main;
         if (countdownText) countdownText.gameObject.SetActive(false);
     }
-
-    void Start()
+    public void ResetCrane()
     {
         lastPointerWorldX = centerX;
         transform.position = new Vector3(centerX, yHang, 0f);
