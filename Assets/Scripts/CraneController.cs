@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class CraneController : MonoBehaviour
@@ -23,7 +24,8 @@ public class CraneController : MonoBehaviour
     [SerializeField] float postDropDelaySeconds = 3f; // delay before next fruit appears
 
     [Header("UI")]
-    [SerializeField] TMP_Text countdownText;   // start-only countdown text (Raycast Target OFF)
+    [SerializeField] Image nextFruitImage;   // start-only countdown text (Raycast Target OFF)
+    
 
     [Header("Refs")]
     [SerializeField] Camera cam;               // assign or uses Camera.main
@@ -45,13 +47,14 @@ public class CraneController : MonoBehaviour
     void Awake()
     {
         if (!cam) cam = Camera.main;
-        if (countdownText) countdownText.gameObject.SetActive(false);
+        
     }
     public void ResetCrane()
     {
-        lastPointerWorldX = centerX;
-        transform.position = new Vector3(centerX, yHang, 0f);
+        //lastPointerWorldX = centerX;
+        //transform.position = new Vector3(centerX, yHang, 0f);
         SpawnNew(); // spawns and hangs (will not fall until player releases after start)
+        DecideNextFruit();
     }
 
     void Update()
@@ -76,40 +79,26 @@ public class CraneController : MonoBehaviour
         }
     }
 
-    // ----- Start-only countdown (called by GameManager before unpausing) -----
-    public IEnumerator PlayStartCountdown(int seconds)
+    
+
+    // Decide Next Fruit
+    GameObject nextFruit;
+    void DecideNextFruit()
     {
-        if (!countdownText)
-        {
-            yield return new WaitForSecondsRealtime(seconds);
-            yield break;
-        }
-
-        countdownText.gameObject.SetActive(true);
-        var rt = countdownText.rectTransform;
-
-        for (int t = seconds; t >= 1; t--)
-        {
-            countdownText.text = t.ToString();
-            yield return Pop(rt, 0.55f, 0.6f, 1.15f, 1.0f);
-            yield return new WaitForSecondsRealtime(0.05f);
-        }
-
-        countdownText.text = "GO!";
-        yield return Pop(rt, 0.45f, 0.6f, 1.2f, 1.0f);
-
-        countdownText.gameObject.SetActive(false);
+        if (startingFruitPrefabs == null || startingFruitPrefabs.Length == 0) return;
+        nextFruit = startingFruitPrefabs[Random.Range(0, startingFruitPrefabs.Length)];
+        nextFruitImage.sprite=nextFruit.GetComponent<SpriteRenderer>().sprite;
     }
-
     // ----- Spawn & Drop -----
     void SpawnNew()
     {
-        if (startingFruitPrefabs == null || startingFruitPrefabs.Length == 0) return;
+        if (!nextFruit) 
+        {
+            if (startingFruitPrefabs == null || startingFruitPrefabs.Length == 0) return;
+            nextFruit = startingFruitPrefabs[Random.Range(0, startingFruitPrefabs.Length)];
+        }
 
-        var prefab = startingFruitPrefabs[Random.Range(0, startingFruitPrefabs.Length)];
-        if (!prefab) return;
-
-        var go = FruitFactory.Spawn(prefab, new Vector3(transform.position.x, yHang, 0f));
+        var go = FruitFactory.Spawn(nextFruit, new Vector3(transform.position.x, yHang, 0f));
         if (!go) return;
 
         carried = go;
@@ -141,19 +130,21 @@ public class CraneController : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Dynamic; // replaces isKinematic = false
             rb.simulated = true;
             rb.WakeUp();
+            if (SoundManager.I != null) SoundManager.I.PlaySfx(SoundManager.SfxType.Drop);
         }
 
         carried = null;
         isHolding = false;
 
         // snap crane to center immediately
-        var pos = transform.position;
-        pos.x = centerX;
-        transform.position = pos;
-        lastPointerWorldX = centerX;
+        //var pos = transform.position;
+        //pos.x = centerX;
+        //transform.position = pos;
+        //lastPointerWorldX = centerX;
 
         // spawn next fruit after delay (no countdown here)
         Invoke(nameof(SpawnNew), Mathf.Max(0f, postDropDelaySeconds));
+        DecideNextFruit();
     }
 
     // ----- Input helpers (Input System) -----
@@ -229,40 +220,12 @@ public class CraneController : MonoBehaviour
     // public wrapper that spawns a new fruit right now (hanging)
     public void SpawnNewOnCrane()
     {
+        
         CancelInvoke(nameof(SpawnNew));
         SpawnNew();
     }
 
 
-    // ----- Tiny pop animation for countdown (unscaled time) -----
-    IEnumerator Pop(RectTransform rt, float duration, float startScale, float upScale, float endScale)
-    {
-        float t = 0f;
-        Vector3 s0 = Vector3.one * startScale, sUp = Vector3.one * upScale, sEnd = Vector3.one * endScale;
-
-        float upTime = duration * 0.7f;
-        rt.localScale = s0;
-        while (t < upTime)
-        {
-            t += Time.unscaledDeltaTime;
-            float k = Mathf.Clamp01(t / upTime);
-            rt.localScale = Vector3.LerpUnclamped(s0, sUp, EaseOutBack(k));
-            yield return null;
-        }
-
-        float downTime = duration - upTime;
-        t = 0f;
-        while (t < downTime)
-        {
-            t += Time.unscaledDeltaTime;
-            float k = Mathf.Clamp01(t / downTime);
-            rt.localScale = Vector3.LerpUnclamped(sUp, sEnd, EaseOutQuad(k));
-            yield return null;
-        }
-
-        rt.localScale = sEnd;
-    }
-    float EaseOutBack(float x) { const float c1 = 1.70158f, c3 = c1 + 1f; return 1 + c3 * Mathf.Pow(x - 1, 3) + c1 * Mathf.Pow(x - 1, 2); }
-    float EaseOutQuad(float x) { return 1 - (1 - x) * (1 - x); }
+    
 
 }

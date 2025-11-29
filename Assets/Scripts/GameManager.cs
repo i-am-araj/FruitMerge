@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Core")]
     public CraneController crane;
+    public Transform bucketTransform;
 
     [Header("UI")]
     public TMP_Text scoreText;
@@ -22,9 +23,10 @@ public class GameManager : MonoBehaviour
     public Button playButton;
     public Button replayButton;
     public Button quitButton;
+    [SerializeField] TMP_Text countdownText;   // start-only countdown text (Raycast Target OFF)
 
     [Header("Tutorial / Coach")]
-    public TutorialCoach tutorial;
+    public TutorialManager tutorial;
     public bool showTutorialOnStart = true;
 
     [Header("Pause / Sound")]
@@ -115,7 +117,7 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel) gameOverPanel.SetActive(false);
 
         nextScoreAd = scoreAdInterval;
-
+        if (countdownText) countdownText.gameObject.SetActive(false);
         //if (showBannerInMenu && AdManager.I != null)
         //    AdManager.I.ShowBanner();
     }
@@ -126,6 +128,32 @@ public class GameManager : MonoBehaviour
         Screen.orientation = ScreenOrientation.Portrait;
     }
 #endif
+    // ----- Start-only countdown (called by GameManager before unpausing) -----
+    public IEnumerator PlayStartCountdown(int seconds)
+    {
+        if (!countdownText)
+        {
+            yield return new WaitForSecondsRealtime(seconds);
+            yield break;
+        }
+
+        countdownText.gameObject.SetActive(true);
+        var rt = countdownText.rectTransform;
+
+        for (int t = seconds; t >= 1; t--)
+        {
+            countdownText.text = t.ToString();
+            yield return Pop(rt, 0.55f, 0.6f, 1.15f, 1.0f);
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
+
+        countdownText.text = "GO!";
+        yield return Pop(rt, 0.45f, 0.6f, 1.2f, 1.0f);
+
+        countdownText.gameObject.SetActive(false);
+        GameManager.I.tutorial.ShowOnceForFirstRun();
+
+    }
 
     // --------------------------------------------------------------------
     // PLAY (WITH REWARDED AD) - uses AdManager
@@ -198,7 +226,7 @@ public class GameManager : MonoBehaviour
             crane.ResetCrane();
             crane.SetUIBlocking(true);
             crane.ClearPressState();
-            yield return StartCoroutine(crane.PlayStartCountdown(3));
+            yield return StartCoroutine(PlayStartCountdown(3));
             crane.ClearPressState();
             crane.SetUIBlocking(false);
         }
@@ -239,7 +267,7 @@ public class GameManager : MonoBehaviour
 
         if (crane)
         {
-            yield return StartCoroutine(crane.PlayStartCountdown(3));
+            yield return StartCoroutine(PlayStartCountdown(3));
             crane.ClearPressState();
             crane.SetUIBlocking(false);
         }
@@ -357,4 +385,35 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    // ----- Tiny pop animation for countdown (unscaled time) -----
+    IEnumerator Pop(RectTransform rt, float duration, float startScale, float upScale, float endScale)
+    {
+        float t = 0f;
+        Vector3 s0 = Vector3.one * startScale, sUp = Vector3.one * upScale, sEnd = Vector3.one * endScale;
+
+        float upTime = duration * 0.7f;
+        rt.localScale = s0;
+        while (t < upTime)
+        {
+            t += Time.unscaledDeltaTime;
+            float k = Mathf.Clamp01(t / upTime);
+            rt.localScale = Vector3.LerpUnclamped(s0, sUp, EaseOutBack(k));
+            yield return null;
+        }
+
+        float downTime = duration - upTime;
+        t = 0f;
+        while (t < downTime)
+        {
+            t += Time.unscaledDeltaTime;
+            float k = Mathf.Clamp01(t / downTime);
+            rt.localScale = Vector3.LerpUnclamped(sUp, sEnd, EaseOutQuad(k));
+            yield return null;
+        }
+
+        rt.localScale = sEnd;
+    }
+    float EaseOutBack(float x) { const float c1 = 1.70158f, c3 = c1 + 1f; return 1 + c3 * Mathf.Pow(x - 1, 3) + c1 * Mathf.Pow(x - 1, 2); }
+    float EaseOutQuad(float x) { return 1 - (1 - x) * (1 - x); }
 }

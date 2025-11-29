@@ -11,9 +11,6 @@ public class Fruit : MonoBehaviour
     public GameObject nextPrefab = null;   // null = largest (no merge)
     public int value = 1;                  // score when THIS fruit is created
 
-    [Header("SFX (optional)")]
-    public AudioClip mergeSfx;
-
     [Header("Merge Tuning")]
     [Tooltip("Ignore touches after spawn to prevent instant merges.")]
     public float graceSeconds = 0.10f;
@@ -189,7 +186,17 @@ public class Fruit : MonoBehaviour
 
         // scoring + sfx
         GameManager.I?.AddScore(Mathf.Max(1, value));
-        if (mergeSfx) AudioSource.PlayClipAtPoint(mergeSfx, mid);
+        if (SoundManager.I != null) SoundManager.I.PlaySfx(SoundManager.SfxType.Merge);
+
+        if (MergeVfxController.I != null)
+        {
+            Color tint = Color.white; // use appropriate color, e.g., sprite dominant color
+            MergeVfxController.I.PlayMergeVfx(mid, tint, 0.9f);
+        }
+
+        // Shake camera
+        if (CameraShake.I != null)
+            CameraShake.I.Shake(0.18f, 0.16f);
 
         // return originals to pool
         FruitFactory.Despawn(other.gameObject);
